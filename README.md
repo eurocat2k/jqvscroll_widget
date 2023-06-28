@@ -22,3 +22,19 @@ Then reopened list contains the selected value, <br/>
 and focused into the center of the viewport as possible.
 </p>
 </div>
+
+## Open list
+
+*Long click* on **CFL** value.
+
+## Close list
+
+*Right click* on the list or *Long click* on any of the list elements.
+
+## Scroll list
+
+Use mouseWheel - upward - to reach the higher values in the list, or - downward - to reach the lower values in the list.
+
+## Select value
+
+*Long press* on any list item.
