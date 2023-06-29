@@ -75,7 +75,7 @@ or adjustable parameters at instantiation:
 
 After widget creation success, *long click* on DOM element activates the list window, and put it above the static value.
 
-If **onChange** callback function set, then after a selection, a callback function will be executed with a parameter which will be set by the widget. The parameter value is the latest selection relsult. Example user deines a function to handle the event when new selected CFL value will set, the callback function parameter will be filled with the value of the selected CFL from the list:
+If **onChange** callback function set, then after a selection, a callback function will be executed with a parameter which will be set by the widget. The parameter value is the latest selection result. Example user defines a function to handle the event when new selected CFL value will set, the callback function parameter will be filled with the value of the selected CFL from the list:
 ```javascript
     // the user's defined onChange callback function definition
     function handleCFLChange(cfl) {
