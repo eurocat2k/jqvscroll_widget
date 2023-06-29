@@ -100,6 +100,6 @@ Feel free to add comments and suggestions.
 
 ### 4.3 Intentionally close
 
-Simply click on any element in the opened list with mouse context button.
+Simply click on any element in the opened list with mouse context button. No selection will occur.
 
 *-zg-*
