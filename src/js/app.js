@@ -1,16 +1,22 @@
 $(function(){
     console.log(`Ready...`);
-    let boxZindex = 100;
-    $('#box1').css({
-        top: parseInt(Math.random() * $('.wrapper').height() / 2),
-        left: parseInt(Math.random() * $('.wrapper').width() / 2),
-        'z-index': 100,
-    });
-    $("#box2").css({
-        top: parseInt((Math.random() * $(".wrapper").height()) / 2),
-        left: parseInt((Math.random() * $(".wrapper").width()) / 2),
-        "z-index": 100,
-    });
+    let top1, top2, left1, left2;
+    top1 = parseInt((Math.random() * $(".wrapper").height()) / 2);
+    left1 = parseInt(Math.random() * $('.wrapper').width() / 2);
+    top2 = parseInt((Math.random() * $(".wrapper").height()) / 2);
+	left2 = parseInt((Math.random() * $(".wrapper").width()) / 2);
+    if (!$('#box1').hasClass('dragged')) {
+        $("#box1").css({
+            top: top1,
+            left: left1,
+        });
+    }
+    if (!$("#box2").hasClass("dragged")) {
+        $("#box2").css({
+            top: top2,
+            left: left2,
+        });
+    }
     let $cfl1 = $("#box1 .cfl").vscroller({
         step: 5, // step size - difference between two consecutive list element
         min: 280, // minimum value in the list not below 0
@@ -59,21 +65,38 @@ $(function(){
     $("#box1").draggable({
         cancel: ".cfl",
         start: function (ev, ui) {
-            $(this).css({ "z-index": 999 });
+            $(this).addClass("dragged");
+            // $(this).css({ 'z-index': 999 });
         },
         stop: function (ev, ui) {
-            $(this).css({ "z-index": 100 });
+            let position = $(this).offset();
+            // console.log("box1", { position });
+            $(this).appendTo(".wrapper").css(position);
+            // $(this).css({ "z-index": 100 });
         },
+    }).on('mousedown', function (ev) {
+        ev.preventDefault();
+        let position = $(this).offset();
+        $(this).appendTo(".wrapper").css(position);
+        $(this).css({ "z-index": 999 });
     });
     $("#box2").draggable({
         cancel: ".cfl",
         start: function (ev, ui) {
-            let z = (boxZindex += 1);
-            $(this).css({ "z-index": 999 });
+            $(this).addClass("dragged");
+            // $(this).css({ "z-index": 999 });
         },
         stop: function (ev, ui) {
-            $(this).css({ "z-index": 100 });
+            let position = $(this).offset();
+            // console.log("box2", { position });
+            $(this).appendTo(".wrapper").css(position);
+            // $(this).css({ "z-index": 100 });
         },
+    }).on("mousedown", function (ev) {
+        ev.preventDefault();
+        let position = $(this).offset();
+        $(this).appendTo(".wrapper").css(position);
+        $(this).css({ "z-index": 999 });
     });
     console.log({$cfl1, $cfl2});
 });
