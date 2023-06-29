@@ -98,4 +98,8 @@ Feel free to add comments and suggestions.
     $('.cfl').vscroller("close");
 ```
 
+### 4.3 Intentionally close
+
+Simply click on any element in the opened list with mouse context button.
+
 *-zg-*
