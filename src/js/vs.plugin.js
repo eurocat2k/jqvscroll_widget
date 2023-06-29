@@ -1,36 +1,3 @@
-
-// <div class="cfl_container">
-//     <div class="cfl_static_value">000</div>
-//     <div class="cfl_vscontainer" style="display: none;">
-//         <div class="cfl_vstrip">
-//             <div class="cfl_vsitem">400</div>
-//             <div class="cfl_vsitem">395</div>
-//             <div class="cfl_vsitem">390</div>
-//             <div class="cfl_vsitem">385</div>
-//             <div class="cfl_vsitem">380</div>
-//             <div class="cfl_vsitem">375</div>
-//             <div class="cfl_vsitem">370</div>
-//             <div class="cfl_vsitem">365</div>
-//             <div class="cfl_vsitem">360</div>
-//             <div class="cfl_vsitem">355</div>
-//             <div class="cfl_vsitem">350</div>
-//             <div class="cfl_vsitem">345</div>
-//             <div class="cfl_vsitem">340</div>
-//             <div class="cfl_vsitem">335</div>
-//             <div class="cfl_vsitem">330</div>
-//             <div class="cfl_vsitem">325</div>
-//             <div class="cfl_vsitem">320</div>
-//             <div class="cfl_vsitem">315</div>
-//             <div class="cfl_vsitem">310</div>
-//             <div class="cfl_vsitem">305</div>
-//             <div class="cfl_vsitem">300</div>
-//             <div class="cfl_vsitem">295</div>
-//             <div class="cfl_vsitem">290</div>
-//             <div class="cfl_vsitem">285</div>
-//             <div class="cfl_vsitem">280</div>
-//         </div>
-//     </div>
-// </div>
 ;(function($,window,document,undefined){
     console.log(`Plugin added into jQuery...`);
     const defaults = {
@@ -73,6 +40,16 @@
         'font-size': 'var(--vsFontSize)',
         'font-weight': 'var(--vsFontWeight)',
         'color': 'var(--vsItemColor)',
+    };
+    const cssVsItemDisabled = {
+        'display': 'flex',
+        'justify-content': 'center',
+        'width': 'var(--vsItemWidth)',
+        'height': 'var(--vsItemHeight)',
+        'background-color': 'var(--vsItemUnSelectableBGColor)',
+        'font-size': 'var(--vsFontSize)',
+        'font-weight': 'var(--vsFontWeight)',
+        'color': 'var(--vsItemUnSelectableColor)',
     };
     const cssVsItemHover = {
         'background-color': 'var(--vsItemBGColorHover)',
@@ -159,8 +136,8 @@
         if (count > self.options.visible) {
             self.options.count = count;
             if ((value + (self.options.visible * self.options.step)) < self.options.max && value >= defaults.min) {
-                self.options.min = value
-                // console.log(`Min updated ${value} count = ${self.options.count} step = ${self.options.step}`);
+                self.options.min = value;
+                self.options.operMin = value;
             }
         }
     }
@@ -173,6 +150,7 @@
             self.options.count = count;
             if ((value - (self.options.visible * self.options.step)) > self.options.min && value <= defaults.max) {
                 self.options.max = value
+                self.options.operMax = value;
             }
         }
     }
@@ -277,11 +255,6 @@
                         if (self.options.selectInitiated === false) {
                             self.element.trigger("onSelect", {'cfl': $(tgt).data('cfl')});
                         }
-                        // console.log(`Select new value ${$(tgt).data('cfl')}`);
-                        // self.options.selectInitiated = true;
-                        // self.hide();
-                        // self.options.selected = parseInt($(tgt).data('cfl'));
-                        // self._refresh();
                     }
                     return false;
                 }, self.options.longPressTimeOut);
@@ -290,7 +263,7 @@
                 e.preventDefault();
                 clearTimeout(self.options.pressTimer);
                 self.options.selectInitiated = false;
-                return false;
+                // return false;
                 break;
             default:
                 break;
@@ -302,17 +275,25 @@
         if (self.options.selectInitiated === false) {
             // console.log(`Select new value ${data.cfl}`);
             self.options.selectInitiated = true;
+            if (self.options.autoOpen) {
+                self.options.autoOpen = false;
+            }
             self.hide();
             self.options.selected = parseInt(data.cfl);
+            if (self.options.onChange && typeof self.options.onChange === "function") {
+                self.options.onChange(self.options.selected);
+            }
             self._refresh();
         }
         return false;
     }
     function selectedUpdate(ev, data) {
-        let self = this;
-        // console.log(`Selected CFL updating...`, data.selected);
-        self.options.selected = data.selected;
-        // console.log(`Selected CFL updating...`, self.options.selected);
+        let self = this, value = parseInt(data.selected);
+        console.log(`Selected CFL updating...`, value, self.options.operMin, self.options.operMax);
+        if (value >= self.options.operMin && value <= self.options.operMax) {
+            self.options.selected = value;
+            console.log(`Selected CFL updating...`, self.options.selected);
+        }
         return false;
     }
     function focusedUpdate(ev, data) {
@@ -357,6 +338,19 @@
         }
         return false;
     }
+    function operMinUpdate(ev, data) {
+        let self = this;
+        self.options.operMin = data.opermin;
+    }
+    function operMaxUpdate(ev, data) {
+        let self = this;
+        self.options.operMax = data.opermax;
+    }
+    function executeCB(ev, data) {
+        let self = this;
+        self.options.onChange = data.cb;
+        data.cb(self.options.selected); // execute callback function
+    }
     // The widget
     $.widget("namespace.vscroller", {
         // constants
@@ -385,6 +379,9 @@
             divT: undefined,                // reference DOM element for scrolling...
             animate: defaults.animate,      //
             delay: defaults.delay,          // animate delay
+            operMin: defaults.min,
+            operMax: defaults.max,
+            onChange: function() {},        // custom callback on change
         },
         _create: function() {
             let self = this;
@@ -399,6 +396,8 @@
                 '--vsItemWidth': '40px',
                 '--vsItemBGColor': 'rgba(228, 227, 220, .9)',
                 '--vsItemColor': 'rgb(0, 0, 0)',
+                '--vsItemUnSelectableBGColor': 'rgba(161, 161, 161, 0.9)',
+                '--vsItemUnSelectableColor': 'rgb(51, 43, 43)',
                 '--vsItemBGColorSelected': 'rgb(0, 117, 226)',
                 '--vsItemColorSelected': 'rgb(253, 253, 250)',
                 '--vsItemBGColorHover': 'rgb(250, 212, 0)',
@@ -515,6 +514,8 @@
                     "selectedUpdate": selectedUpdate,
                     "focusedUpdate": focusedUpdate,
                     "animateUpdate": animateUpdate,
+                    "operMinUpdate": operMinUpdate,
+                    "operMaxUpdate": operMaxUpdate,
                 });
                 $(self.options.dom.cfl_static_value).off({
                     "mouseup": longPress,
@@ -527,18 +528,24 @@
             // add list elements
             let _elem;
             for (let v = self.options.max; v >= self.options.min; v -= self.options.step) {
-                _elem = $(`<div class="cfl_vsitem" data-cfl="${v.toString(10).padStart(3, "0")}">${v.toString(10).padStart(3, "0")}</div>`);
-                if (self.options.selected && parseInt(self.options.selected) === v) {
-                    $(_elem).addClass('vs_selected');
-                    $(_elem).css(cssVsItemSelected);
+                // is in oper range?
+                if (v >= self.options.operMin && v <= self.options.operMax) {
+                    _elem = $(`<div class="cfl_vsitem" data-cfl="${v.toString(10).padStart(3, "0")}">${v.toString(10).padStart(3, "0")}</div>`);
+                    if (self.options.selected && parseInt(self.options.selected) === v) {
+                        $(_elem).addClass('vs_selected');
+                        $(_elem).css(cssVsItemSelected);
+                    } else {
+                        $(_elem).css(cssVsItemNormal);
+                    }
+                    // hover effect normal item
+                    _elem.on("mouseover", onHover).on("mouseout", onHover);
+                    _elem.on("mousedown", selectCFL.bind(self)).on("mouseup", selectCFL.bind(self));
                 } else {
-                    $(_elem).css(cssVsItemNormal);
+                    _elem = $(`<div class="cfl_vsitem" data-cfl="${v.toString(10).padStart(3, "0")}">${v.toString(10).padStart(3, "0")}</div>`);
+                    $(_elem).addClass('vs_disabled');
+                    $(_elem).css(cssVsItemDisabled);
                 }
-                // hover effect normal item
                 _elem.on("contextmenu", disableContextMenu.bind(self));
-                _elem.on("mouseover", onHover).on("mouseout", onHover);
-                _elem.on("mousedown", selectCFL.bind(self)).on("mouseup", selectCFL.bind(self));
-
                 $('.cfl_vstrip').append(_elem);
                 //  add no-select to top element
                 $(self.options.dom.element).css(cssNoSelect);
@@ -562,6 +569,9 @@
                 "selectedUpdate": selectedUpdate.bind(self),
                 "focusedUpdate": focusedUpdate.bind(self),
                 "animateUpdate": animateUpdate.bind(self),
+                "operMinUpdate": operMinUpdate.bind(self),
+                "operMaxUpdate": operMaxUpdate.bind(self),
+                "executeCB": executeCB.bind(self),
             });
             // add longpress event listener on static value field
             $(self.options.dom.cfl_static_value).on("mouseup", longPress.bind(self)).on("mousedown", longPress.bind(self));
@@ -587,6 +597,7 @@
         },
         _setOption: function(key, value) {
             let self = this;
+            console.log({_setOption: {key, value}});
             switch(key) {
                 case "step":
                     if (Number.isInteger(value)){
@@ -603,6 +614,18 @@
                                 self.element.trigger("minUpdate", {min: value});
                             } else if (key.match(/^max$/)) {
                                 self.element.trigger("maxUpdate", {max: value});
+                            }
+                        }
+                    }
+                    break;
+                case "opermax":
+                case "opermin":
+                    if (Number.isInteger(value)) {
+                        if (value >= self.options.min && value <= self.options.max) {
+                            if (key.match(/^opermin$/)) {
+                                self.element.trigger("operMinUpdate", {opermin: value});
+                            } else if (key.match(/^opermax$/)) {
+                                self.element.trigger("operMaxUpdate", {opermax: value});
                             }
                         }
                     }
@@ -628,7 +651,7 @@
                         self.element.trigger("animateUpdate", {animate: false});  // default behaviour...
                     }
                     break;
-                case "selectTimeOut":
+                case "longClick":
                     if (Number.isInteger(value)) {
                         if (value >= defaults.minLongPressTimeOut && value <= defaults.maxLongPressTimeOut) {
                             self.element.trigger("selectTimeOut", {selectTimeOut: value});
@@ -638,6 +661,7 @@
                 case "selected":
                     if (Number.isInteger(value)) {
                         if (value >= self.options.min && value <= self.options.max) {
+                            console.log(`self.element.trigger("selectedUpdate", {selected: ${value}});`);
                             self.element.trigger("selectedUpdate", {selected: value});
                         }
                     }
@@ -651,12 +675,19 @@
                         }
                     }
                     break;
+                case "onChange":
+                    if (typeof value === "function") {
+                        self.element.trigger("executeCB", {cb: value});
+                        // self.options.onChange();
+                    }
+                    break;
                 default:
                     break;
             }
             // self._refresh();
         },
         _setOptions: function(opts) {
+            console.log({opts});
             let self = this;
             if (opts && typeof opts === "object") {
                 // ordered processing...
@@ -672,6 +703,12 @@
                 if (opts['max']) {
                     self._setOption('max', opts['max']);
                 }
+                if (opts['opermin']) {
+                    self._setOption('opermin', opts['opermin']);
+                }
+                if (opts['opermax']) {
+                    self._setOption('opermax', opts['opermax']);
+                }
                 if (opts['autoOpen']) {
                     self._setOption('autoOpen', opts['autoOpen']);
                 }
@@ -680,6 +717,12 @@
                 }
                 if (opts['animate']) {
                     self._setOption('animate', opts['animate']);
+                }
+                if (opts['longClick']) {
+                    self._setOption('longClick', opts['longClick']);
+                }
+                if (opts['onChange']) {
+                    self._setOption('onChange', opts['onChange']);
                 }
             }
             // update at the end of the chain...
