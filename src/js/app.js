@@ -1,5 +1,6 @@
 $(function(){
     console.log(`Ready...`);
+    let lastOpenedCFL;
     let top1, top2, left1, left2;
     top1 = parseInt((Math.random() * $(".wrapper").height()) / 2);
     left1 = parseInt(Math.random() * $('.wrapper').width() / 2);
@@ -30,13 +31,20 @@ $(function(){
         onChange: function (data) {
             console.log(`Executed user's callback function with param ${data}`);
         },
+        onOpened: function (data) {
+            lastOpenedCFL = data;
+            console.log(`Executed onOpened callback`, $(data));
+        }
     });
     $cfl1.vscroller({
-        opermin: 300,       // operational minimum - bottom of selectable
-        opermax: 380,       // operational maximum - top of selectable
-        selected: 340,      // selected - shall be between operational range
+        opermin: 300, // operational minimum - bottom of selectable
+        opermax: 380, // operational maximum - top of selectable
+        selected: 340, // selected - shall be between operational range
         visible: 7,
-        longClick: 250,     // longpress delay
+        longClick: 250, // longpress delay
+    }).on("executeOpenedCB", function (ev, cb) {
+        console.log(`Open cb called`, $(cb));
+        return false;
     });
 
     let $cfl2 = $("#box2 .cfl").vscroller({
@@ -52,6 +60,10 @@ $(function(){
         onChange: function (data) {
             console.log(`Executed user's callback function with param ${data}`);
         },
+        onOpened: function (data) {
+            lastOpenedCFL = data;
+            console.log(`Executed onOpened callback`, $(data));
+        }
     });
 
     $cfl2.vscroller({
@@ -76,6 +88,9 @@ $(function(){
         },
     }).on('mousedown', function (ev) {
         ev.preventDefault();
+        if (lastOpenedCFL && (lastOpenedCFL !== this)) {
+            $(lastOpenedCFL).vscroller("close");
+        }
         let position = $(this).offset();
         $(this).appendTo(".wrapper").css(position);
         $(this).css({ "z-index": 999 });
@@ -94,9 +109,12 @@ $(function(){
         },
     }).on("mousedown", function (ev) {
         ev.preventDefault();
+        if (lastOpenedCFL && lastOpenedCFL !== this) {
+            $(lastOpenedCFL).vscroller("close");
+        }
         let position = $(this).offset();
         $(this).appendTo(".wrapper").css(position);
         $(this).css({ "z-index": 999 });
     });
-    console.log({$cfl1, $cfl2});
+    // console.log({$cfl1, $cfl2});
 });

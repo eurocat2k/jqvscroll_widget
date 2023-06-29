@@ -287,6 +287,11 @@
         }
         return false;
     }
+    function onOpened(ev, data) {
+        if (self.options.onOpen && typeof self.options.onOpen === "function") {
+            self.options.onChange(self.options.selected(self));
+        }
+    }
     function selectedUpdate(ev, data) {
         let self = this, value = parseInt(data.selected);
         console.log(`Selected CFL updating...`, value, self.options.operMin, self.options.operMax);
@@ -349,7 +354,12 @@
     function executeCB(ev, data) {
         let self = this;
         self.options.onChange = data.cb;
-        data.cb(self.options.selected); // execute callback function
+        data.cb(self.options.selected); // execute callback function with param of selected altitude
+    }
+    function executeOpenedCB(ev, data) {
+        let self = this;
+        self.options.onOpened = data.cb;
+        data.cb(self);  // execute callback function with param of self as expected - to be able to handle object from main app
     }
     // The widget
     $.widget("namespace.vscroller", {
@@ -381,7 +391,8 @@
             delay: defaults.delay,          // animate delay
             operMin: defaults.min,
             operMax: defaults.max,
-            onChange: function() {},        // custom callback on change
+            onChange: function () { },      // custom callback on change
+            onOpened: function () { },      // custom callback on open
         },
         _create: function() {
             let self = this;
@@ -584,6 +595,7 @@
                 "operMinUpdate": operMinUpdate.bind(self),
                 "operMaxUpdate": operMaxUpdate.bind(self),
                 "executeCB": executeCB.bind(self),
+                "executeOpenedCB": executeOpenedCB.bind(self),
             });
             // add longpress event listener on static value field
             $(self.options.dom.cfl_static_value).on("mouseup", longPress.bind(self)).on("mousedown", longPress.bind(self));
@@ -693,13 +705,19 @@
                         // self.options.onChange();
                     }
                     break;
+                case "onOpened":
+                    if (typeof value === "function") {
+                        console.log(`set onOpened handler`);
+                        self.element.trigger("executeOpenedCB", { cb: value });
+                    }
+                    break;
                 default:
                     break;
             }
             // self._refresh();
         },
         _setOptions: function(opts) {
-            console.log({opts});
+            console.log({ opts });
             let self = this;
             if (opts && typeof opts === "object") {
                 // ordered processing...
@@ -735,6 +753,9 @@
                 }
                 if (opts['onChange']) {
                     self._setOption('onChange', opts['onChange']);
+                }
+                if (opts["onOpened"]) {
+                    self._setOption("onOpened", opts["onOpened"]);
                 }
             }
             // update at the end of the chain...
