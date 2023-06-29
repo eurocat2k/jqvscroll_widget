@@ -485,44 +485,50 @@
             // get mousewheel event
             let mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
             //
-            if ($('.cfl_vstrip').get(0)) {
-                // remove event listeners from each elements
-                $('.cfl_vstrip').children().each(function(i,e){
-                    // hover event off
-                    $(e).off("mouseover", onHover);
-                    $(e).off("mouseoout", onHover);
-                    $(e).off("mousedown", selectCFL);
-                    $(e).off("mouseup", selectCFL);
-                    $(e).off("contextmenu", disableContextMenu);
-                    $(e).off("onSelect", disableContextMenu);
-                });
-                //
-                $(self.options.dom.cfl_vscontainer).get(0).removeEventListener(mousewheelevt, scrollMouseWheel);
-                // $(self.options.dom.cfl_vscontainer).off({
-                //     mousewheelevt: scrollMouseWheel,
-                // })
-                //
-                $(self.element).off({
-                    "stepUpdate": stepUpdate,
-                    "minUpdate": minUpdate,
-                    "maxUpdate": maxUpdate,
-                    "visibleUpdate": visibleUpdate,
-                    "autoOpenUpdate": autoOpenUpdate,
-                    "selectTimeOut": selectTimeOut,
-                    "contextmenu": disableContextMenu,
-                    "_hide": disableContextMenu,
-                    "selectedUpdate": selectedUpdate,
-                    "focusedUpdate": focusedUpdate,
-                    "animateUpdate": animateUpdate,
-                    "operMinUpdate": operMinUpdate,
-                    "operMaxUpdate": operMaxUpdate,
-                });
-                $(self.options.dom.cfl_static_value).off({
-                    "mouseup": longPress,
-                    "mousedown": longPress,
-                })
-                $(self.element).empty();
-                $(':root').css('--vsVisibleItems', self.options.visible);
+            if (self.options.dom.cfl_vstrip) {
+                if ($(self.options.dom.cfl_vstrip).get(0)) {
+                    // remove event listeners from each elements
+                    $(self.options.dom.cfl_vstrip)
+                        .children()
+                        .each(function (i, e) {
+                            // hover event off
+                            $(e).off("mouseover", onHover);
+                            $(e).off("mouseoout", onHover);
+                            $(e).off("mousedown", selectCFL);
+                            $(e).off("mouseup", selectCFL);
+                            $(e).off("contextmenu", disableContextMenu);
+                            $(e).off("onSelect", disableContextMenu);
+                        });
+                    //
+                    $(self.options.dom.cfl_vscontainer)
+                        .get(0)
+                        .removeEventListener(mousewheelevt, scrollMouseWheel);
+                    // $(self.options.dom.cfl_vscontainer).off({
+                    //     mousewheelevt: scrollMouseWheel,
+                    // })
+                    //
+                    $(self.element).off({
+                        stepUpdate: stepUpdate,
+                        minUpdate: minUpdate,
+                        maxUpdate: maxUpdate,
+                        visibleUpdate: visibleUpdate,
+                        autoOpenUpdate: autoOpenUpdate,
+                        selectTimeOut: selectTimeOut,
+                        contextmenu: disableContextMenu,
+                        _hide: disableContextMenu,
+                        selectedUpdate: selectedUpdate,
+                        focusedUpdate: focusedUpdate,
+                        animateUpdate: animateUpdate,
+                        operMinUpdate: operMinUpdate,
+                        operMaxUpdate: operMaxUpdate,
+                    });
+                    $(self.options.dom.cfl_static_value).off({
+                        mouseup: longPress,
+                        mousedown: longPress,
+                    });
+                    $(self.element).empty();
+                    $(":root").css("--vsVisibleItems", self.options.visible);
+                }
             }
             $(self.options.dom.element).append('<div class="cfl_container" style="display: flex; justify-content: center;"><div class="cfl_static_value">000</div><div class="cfl_vscontainer" style="position: absolute; border: solid 1px black; width: var(--vsItemWidth); height: calc(var(--vsVisibleItems) * var(--vsItemHeight)); overflow: hidden; display: flex; justify-content: center;"><div class="cfl_vstrip" style="width: var(--vsItemWidth); position: absolute;display: flex; flex-direction: column; align-items: center; background-color: var(--vsStripBG);" ></div></div></div>');
             // add list elements
@@ -546,7 +552,7 @@
                     $(_elem).css(cssVsItemDisabled);
                 }
                 _elem.on("contextmenu", disableContextMenu.bind(self));
-                $('.cfl_vstrip').append(_elem);
+                $(self.options.dom.cfl_vstrip).append(_elem);
                 //  add no-select to top element
                 $(self.options.dom.element).css(cssNoSelect);
                 // save and updat DOM elements
