@@ -70,7 +70,7 @@ or adjustable parameters at instantiation:
         min: 100,
         max: 200,
         selected: 160
-    }).("open");
+    }).vscroller("open");
 ```
 
 After widget creation success, *long click* on DOM element activates the list window, and put it above the static value.
