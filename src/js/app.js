@@ -11,7 +11,7 @@ $(function(){
         left: parseInt((Math.random() * $(".wrapper").width()) / 2),
         "z-index": 100,
     });
-    $cfl1 = $("#box1 .cfl").vscroller({
+    let $cfl1 = $("#box1 .cfl").vscroller({
         step: 5, // step size - difference between two consecutive list element
         min: 280, // minimum value in the list not below 0
         // opermin: 300,       // operational minimum - bottom of selectable values. Below this value the items (if any) disabled.
@@ -33,7 +33,7 @@ $(function(){
         longClick: 250,     // longpress delay
     });
 
-    $cfl2 = $("#box2 .cfl").vscroller({
+    let $cfl2 = $("#box2 .cfl").vscroller({
         step: 5, // step size - difference between two consecutive list element
         min: 280, // minimum value in the list not below 0
         // opermin: 300,       // operational minimum - bottom of selectable values. Below this value the items (if any) disabled.

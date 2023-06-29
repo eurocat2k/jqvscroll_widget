@@ -386,27 +386,32 @@
         _create: function() {
             let self = this;
             // prepare :root
-            $(':root').css({
-                '--vsFontFamily': 'Arial, Helvetica, sans-serif',
-                '--vsFontSize': '14px',
-                '--vsFontWeight': 500,
-                '--vsFontWeightBold': 600,
-                '--vsFontWeightThin': 400,
-                '--vsItemHeight': '16px',
-                '--vsItemWidth': '40px',
-                '--vsItemBGColor': 'rgba(228, 227, 220, .9)',
-                '--vsItemColor': 'rgb(0, 0, 0)',
-                '--vsItemUnSelectableBGColor': 'rgba(161, 161, 161, 0.9)',
-                '--vsItemUnSelectableColor': 'rgb(51, 43, 43)',
-                '--vsItemBGColorSelected': 'rgb(0, 117, 226)',
-                '--vsItemColorSelected': 'rgb(253, 253, 250)',
-                '--vsItemBGColorHover': 'rgb(250, 212, 0)',
-                '--vsItemColorHover': 'rgb(38, 43, 53)',
-                '--vsItemBGColorHoverSelected': 'rgb(0, 129, 50)',
-                '--vsItemColorHoverSelected': 'rgb(255, 255, 255)',
-                '--vsVisibleItems': 7,
-                '--vsStripBG': 'rgba(228, 227, 220, .9)',
-            });
+            // console.log(`isTHERE VSUID: "${$(":root").css('--vsUID')}"?`);
+            let uid = $(":root").css('--vsUID');
+            if (typeof uid === "undefined") {
+                $(":root").css({
+                    "--vsUID": "VSCROLL_123456789ABDEF",
+                    "--vsFontFamily": "Arial, Helvetica, sans-serif",
+                    "--vsFontSize": "14px",
+                    "--vsFontWeight": 500,
+                    "--vsFontWeightBold": 600,
+                    "--vsFontWeightThin": 400,
+                    "--vsItemHeight": "16px",
+                    "--vsItemWidth": "40px",
+                    "--vsItemBGColor": "rgba(228, 227, 220, .9)",
+                    "--vsItemColor": "rgb(0, 0, 0)",
+                    "--vsItemUnSelectableBGColor": "rgba(161, 161, 161, 0.9)",
+                    "--vsItemUnSelectableColor": "rgb(51, 43, 43)",
+                    "--vsItemBGColorSelected": "rgb(0, 117, 226)",
+                    "--vsItemColorSelected": "rgb(253, 253, 250)",
+                    "--vsItemBGColorHover": "rgb(250, 212, 0)",
+                    "--vsItemColorHover": "rgb(38, 43, 53)",
+                    "--vsItemBGColorHoverSelected": "rgb(0, 129, 50)",
+                    "--vsItemColorHoverSelected": "rgb(255, 255, 255)",
+                    "--vsVisibleItems": 7,
+                    "--vsStripBG": "rgba(228, 227, 220, .9)",
+                });
+            }
             // construct new list with event handlers
             self._construct();
         },
@@ -417,17 +422,18 @@
             try {
                 // assume that list is visible
                 let self = this, divT;
-                $vsContainer = $(self.options.dom.cfl_vscontainer);
-                $cfl_vscontainer = $(self.options.dom.cfl_vscontainer);
-                $stripList = $vsContainer.find(self.options.dom.cfl_vstrip);
+                let $vsContainer = $(self.options.dom.cfl_vscontainer);
+                let $cfl_vscontainer = $(self.options.dom.cfl_vscontainer);
+                let $stripList = $vsContainer.find(self.options.dom.cfl_vstrip);
+                let $scrollTo;
                 if (self.options.selected) {
                     // do using .vs_selected item
                     $scrollTo = $stripList.find('.vs_selected');
-                    $selected = $(self.options.dom.cfl_vscontainer).find('.vs_selected').index();
+                    let $selected = $(self.options.dom.cfl_vscontainer).find('.vs_selected').index();
                     if ($selected < 0) {
                         let _newValue = roundInt(self.options.selected, self.options.step);
                         self.options.selected = _newValue;
-                        $elem = $stripList.find(`div:contains(${_newValue})`);
+                        let $elem = $stripList.find(`div:contains(${_newValue})`);
                         let index = $elem.index() + 1;
                         $scrollTo = $stripList.children(`:nth-child(${index})`);
                         $scrollTo.addClass('vs_selected');
@@ -440,7 +446,7 @@
                         $scrollTo = $stripList.children().first();
                         divT = self.options.divT = $stripList.children().first();
                     } else if (self.options.focused.match(/last/g)) {
-                        $scrollTo = $stripList.children().last()
+                        let $scrollTo = $stripList.children().last()
                         divT = self.options.divT = $stripList.children().last();
                     }
                 }
