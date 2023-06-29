@@ -15,3 +15,12 @@ scrollable selectable widget for ATC simulations
     <b>Fig02</b>: After a "<em>long click</em>", still no CFL value selected.
   </p>
 </div>
+
+<div style="text-align:center">
+  <img src="doc/images/img03.png"/>
+  <p>
+    <b>Fig03</b>: After a "<em>long clicked</em>" element - <b>070</b> -,<br/> the selected value is centered, and highlighted. <br/>
+Then reopened list contains the selected value, <br/>
+and focused into the center of the viewport as possible.
+  </p>
+</div>
