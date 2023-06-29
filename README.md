@@ -13,7 +13,7 @@ scrollable selectable widget for ATC simulations
   <img src="doc/images/img02.png"/>
   <p>
     <b>Fig02</b>: After a "<em>long click</em>", still no CFL value selected <br/>
-    or ```.vscroll("open")``` called.
+    or <b>.vscroll("open")</b> called.
   </p>
 </div>
 
