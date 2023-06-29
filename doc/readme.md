@@ -70,7 +70,7 @@ or adjustable parameters at instantiation:
         min: 100,
         max: 200,
         selected: 160
-    })
+    }).("open");
 ```
 
 After widget creation success, *long click* on DOM element activates the list window, and put it above the static value.
@@ -91,5 +91,11 @@ If **onChange** callback function set, then after a selection, a callback functi
 ```
 
 Feel free to add comments and suggestions.
+
+### 4.2 Forced close
+
+```javascript
+    $('.cfl').vscroller("close");
+```
 
 *-zg-*
