@@ -645,7 +645,7 @@
                 case "opermax":
                 case "opermin":
                     if (Number.isInteger(value)) {
-                        if (value >= self.options.min && value <= self.options.max) {
+                        if (value > self.options.min && value < self.options.max) {
                             if (key.match(/^opermin$/)) {
                                 self.element.trigger("operMinUpdate", {opermin: value});
                             } else if (key.match(/^opermax$/)) {
