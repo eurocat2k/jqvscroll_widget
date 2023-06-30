@@ -31,7 +31,7 @@ $(function(){
         onChange: function (data) {
             console.log(`Executed user's callback function with param ${data}`);
         },
-        onOpened: function (data) {
+        onOpen: function (data) {
             lastOpenedCFL = data;
             console.log(`Executed onOpened callback`, $(data));
         }
@@ -42,9 +42,6 @@ $(function(){
         selected: 340, // selected - shall be between operational range
         visible: 7,
         longClick: 250, // longpress delay
-    }).on("executeOpenedCB", function (ev, cb) {
-        console.log(`Open cb called`, $(cb));
-        return false;
     });
 
     let $cfl2 = $("#box2 .cfl").vscroller({
@@ -60,7 +57,7 @@ $(function(){
         onChange: function (data) {
             console.log(`Executed user's callback function with param ${data}`);
         },
-        onOpened: function (data) {
+        onOpen: function (data) {
             lastOpenedCFL = data;
             console.log(`Executed onOpened callback`, $(data));
         }
