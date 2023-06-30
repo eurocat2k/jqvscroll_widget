@@ -705,9 +705,9 @@
                         // self.options.onChange();
                     }
                     break;
-                case "onOpened":
+                case "onOpen":
                     if (typeof value === "function") {
-                        console.log(`set onOpened handler`);
+                        console.log(`set onOpen handler`);
                         self.element.trigger("executeOpenedCB", { cb: value });
                     }
                     break;
@@ -754,8 +754,8 @@
                 if (opts['onChange']) {
                     self._setOption('onChange', opts['onChange']);
                 }
-                if (opts["onOpened"]) {
-                    self._setOption("onOpened", opts["onOpened"]);
+                if (opts["onOpen"]) {
+                    self._setOption("onOpen", opts["onOpen"]);
                 }
             }
             // update at the end of the chain...
